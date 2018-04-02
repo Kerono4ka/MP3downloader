@@ -4,6 +4,7 @@ import requests
 import os
 import eyed3
 
+
 def load_urls_from_xml_file(path):
 
     urls = []
@@ -24,7 +25,7 @@ def load_urls_from_xml_file(path):
 
         parsed_uri = urlparse(text)
         domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-        urls.append({'source': domain, 'value': text, 'depth': depth});
+        urls.append({'source': domain, 'value': text, 'depth': depth})
 
     return urls
 
@@ -169,9 +170,3 @@ def load_mp3_files_and_filter_by_genre(xml_filename, genre):
     mp3_files = filter_mp3_files_by_genre(mp3_files, genre)
 
     save_mp3_files_to_xml(mp3_files, "songs", filename=genre.lower() + "-songs.xml")
-
-
-load_mp3_files_and_filter_by_genre("mp3links.xml", "Rock")
-
-
-
