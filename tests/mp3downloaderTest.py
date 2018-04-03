@@ -69,3 +69,80 @@ class TestMp3Downloader(unittest.TestCase):
 
         except Exception as e:
             self.assertEqual(str(e), "No connection with internet")
+
+    def test_filter_mp3_files_by_genre(self):
+        mp3_files = [
+                    {
+                        'title': "Ain't It Fun (The Dead Boys cover)",
+                        'album': "Toggle 80'S Hair Metal Band: Guns 'N Roses",
+                        'artist': "Guns N' Roses",
+                        'genre': "Hair Metal",
+                        'path': "folder/file01.mp3"
+                    },
+                    {
+                        'title': "Swish swish",
+                        'album': "Katy Perry",
+                        'artist': "Katy Perry",
+                        'genre': "Pop",
+                        'path': "folder/file02.mp3"
+                    },
+                    {
+                        'title': "Dolce Gabbana",
+                        'album': "Dolce Gabbana",
+                        'artist': "Verka Serdyuchka",
+                        'genre': "Pop",
+                        'path': "folder/file03.mp3"
+                    }
+                ]
+        expected_mp3_files = [{
+                    'title': "Swish swish",
+                    'album': "Katy Perry",
+                    'artist': "Katy Perry",
+                    'genre': "Pop",
+                    'path': "folder/file02.mp3"
+                },
+                 {
+                        'title': "Dolce Gabbana",
+                        'album': "Dolce Gabbana",
+                        'artist': "Verka Serdyuchka",
+                        'genre': "Pop",
+                        'path': "folder/file03.mp3"
+                }]
+
+        result = filter_mp3_files_by_genre(mp3_files, "Pop")
+
+        self.assertEqual(expected_mp3_files, result)
+
+    def test_save_mp3_files_to_xml(self):
+        mp3_files = [
+            {
+                'title': "Swish swish",
+                'album': "Katy Perry",
+                'artist': "Katy Perry",
+                'genre': "Pop",
+                'path': "folder/file02.mp3"
+            },
+            {
+                'title': "Dolce Gabbana",
+                'album': "Dolce Gabbana",
+                'artist': "Verka Serdyuchka",
+                'genre': "Pop",
+                'path': "folder/file03.mp3"
+            }
+        ]
+
+        file_name = "pop-songs.xml"
+
+        save_mp3_files_to_xml(mp3_files, path.dirname(path.realpath(__file__)),  filename=file_name)
+        self.assertTrue(os.path.exists(file_name))
+
+        with open(file_name) as file:
+            result = file.read()
+
+        os.remove(file_name)
+        test_file_name = path.join(path.dirname(path.realpath(__file__)), path.join("Resources", "test-pop-songs.xml"))
+
+        with open(test_file_name) as file:
+            expected_result = file.read()
+
+        self.assertEqual(expected_result, result)

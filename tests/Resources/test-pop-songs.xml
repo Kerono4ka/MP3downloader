@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<songs>
+  <song artist="Katy Perry" genre="Pop" path="folder/file02.mp3" title="Swish swish"/>
+  <song artist="Verka Serdyuchka" genre="Pop" path="folder/file03.mp3" title="Dolce Gabbana"/>
+</songs>
