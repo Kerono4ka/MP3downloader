@@ -69,4 +69,3 @@ class TestMp3Downloader(unittest.TestCase):
 
         except Exception as e:
             self.assertEqual(str(e), "No connection with internet")
-
