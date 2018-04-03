@@ -7,7 +7,6 @@ import eyed3
 
 
 def load_urls_from_xml_file(path):
-
     urls = []
     with open(path) as file:
         xml = file.read()
@@ -32,7 +31,6 @@ def load_urls_from_xml_file(path):
 
 
 def load_mp3_links_from_urls(urls):
-
     mp3_links = []
     potential_urls = []
 
@@ -41,7 +39,9 @@ def load_mp3_links_from_urls(urls):
             url_path = urljoin(url['source'], url['value'])
             r = requests.get(url_path)
 
-            result = get_mp3_links_and_potential_urls_from_html(r.text, url, url_path)
+            result = get_mp3_links_and_potential_urls_from_html(r.text,
+                                                                url,
+                                                                url_path)
             mp3_links += result['mp3_links']
             potential_urls += result['potential_urls']
         except ConnectionError:
@@ -55,7 +55,9 @@ def load_mp3_links_from_urls(urls):
     return mp3_links
 
 
-def get_mp3_links_and_potential_urls_from_html(html_text, current_url, current_url_path):
+def get_mp3_links_and_potential_urls_from_html(html_text,
+                                               current_url,
+                                               current_url_path):
     result = {}
 
     mp3_links = []
@@ -68,9 +70,15 @@ def get_mp3_links_and_potential_urls_from_html(html_text, current_url, current_u
         if link.attrib['href']:
             if link.attrib['href'].endswith('.mp3'):
                 mp3_links.append(
-                    {'link': urljoin(current_url['source'], link.attrib['href']), 'source': current_url['value']})
-            elif current_url['depth'] > 1 and not link.attrib['href'].startswith('javascript:') and \
-                    current_url_path != urljoin(current_url['source'], link.attrib['href']):
+                    {
+                     'link': urljoin(current_url['source'],
+                                     link.attrib['href']),
+                     'source': current_url['value']
+                     })
+            elif current_url['depth'] > 1 and not \
+                link.attrib['href'].startswith('javascript:') and \
+                    current_url_path != urljoin(current_url['source'],
+                                                link.attrib['href']):
                 potential_urls.append({'source': current_url['source'],
                                        'value': link.attrib['href'],
                                        'depth': current_url['depth'] - 1})
@@ -96,7 +104,8 @@ def load_mp3_files_from_links(links, output_path):
 
             with open(file_path, 'wb') as file:
                 file.write(song)
-                print("File downloaded successfully: " + file_name + " as " + file_path)
+                print("File downloaded successfully: "
+                      + file_name + " as " + file_path)
 
             song_info = get_id3_info_from_mp3_file(file_path)
             song_info['path'] = file_path
@@ -105,7 +114,8 @@ def load_mp3_files_from_links(links, output_path):
         except ConnectionError:
             raise ConnectionError("No connection with internet")
         except Exception:
-            print("File WAS NOT downloaded successfully: " + file_name + " as " + file_path)
+            print("File WAS NOT downloaded successfully: "
+                  + file_name + " as " + file_path)
 
     return mp3_files
 
@@ -127,7 +137,6 @@ def get_id3_info_from_mp3_file(mp3_file_path):
 
 
 def filter_mp3_files_by_genre(mp3_files, genre):
-
     result = []
 
     for mp3_file in mp3_files:
@@ -155,7 +164,10 @@ def save_mp3_files_to_xml(mp3_files, output_path, **kwargs):
                          genre=mp3_file['genre'],
                          path=mp3_file['path'])
 
-    xml_string = etree.tostring(xml_doc, pretty_print=True, xml_declaration=True, encoding="UTF-8")
+    xml_string = etree.tostring(xml_doc,
+                                pretty_print=True,
+                                xml_declaration=True,
+                                encoding="UTF-8")
 
     file_name = os.path.join(output_path, file_name)
     with open(file_name, 'wb') as file:
@@ -174,4 +186,5 @@ def load_mp3_files_and_filter_by_genre(xml_filename, genre):
     mp3_files = load_mp3_files_from_links(mp3_links, "songs")
     mp3_files = filter_mp3_files_by_genre(mp3_files, genre)
 
-    save_mp3_files_to_xml(mp3_files, "songs", filename=genre.lower() + "-songs.xml")
+    save_mp3_files_to_xml(mp3_files, "songs",
+                          filename=genre.lower() + "-songs.xml")
